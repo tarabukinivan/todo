@@ -1,134 +1,188 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Link storage</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" type="text/css">
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-    crossorigin="anonymous">
-    <style>
-    html, body {
-      font-family: 'Open Sans', sans-serif;
-      font-size: 14px;
-      margin: 0;
-      min-height: 180px;
-      padding: 0;
-      width: 380px;
-	  border: 1px solid #ccc;
-    }
-    h1 {
-      font-family: 'Menlo', monospace;
-      font-size: 22px;
-      font-weight: 400;
-      margin: 0;
-      color: #2f5876;
-    }
-    a:link,
-    a:visited {
-      color: #000000;
-      outline: 0;
-      text-decoration: none;
-    }
-    img {
-      width: 30px; /*ширина изображений*/
-    }
-    .modal-header {
-      align-items: center; /*выравнивание элементов по центру*/
-      border-bottom: 0.5px solid #dadada; /*свойства нижней разделительной линии*/
-      height: 81px;
-      background-color: #f2f2f2;
-    }
-    .modal-header span {      
-      font-style: italic;
-      color: red;      
-      font-size: 12px;
-      margin: 10px;
-    }
-    .logo {
-      padding: 16px; /*отступы со всех сторон*/
-    }
-    .logo-icon {
-      vertical-align: text-bottom; /*выравнивание по нижней части текста*/
-      margin-right: 12px; /*задётся отступ элементов от изображения*/
-    }
-    /*задаём настройки для контейнеров с иконками*/
-    .inpuwrapper input, .inpuwrapper select{
-      margin: 5px 10px;
-      width: 84%;      
-    }
-    .inpuwrapper{
-      padding: 10px 0;  
-      
-    }
-    #perec{
-      position: absolute;
-      top: -7px;
-      left: 48%;
-      cursor: pointer;
-    }
-  .fa-plus-circle{
-    cursor: pointer;
-  }    
-	.nets{
-    display: none;  
-  }
-	#add-del{
-		border: 1px solid #ccc;
-	}
-  #listM ul{
-    padding-inline-start:5px;
-  }
-  #listM li{
-    color: #028b07;
-  }
-  #listM li i, #listM h4 i{
-    margin-right: 7px;
-    cursor: pointer;
-  }
-  #listM ul{
-    margin: 0;
-  }
-  #listM h4{
-    color: #434346;
-    margin: 10px 0 2px 0;
-  }
-  .clip {
-    white-space: nowrap; /* Запрещаем перенос строк */
-    overflow: hidden; /* Обрезаем все, что не помещается в область */
-    text-overflow: ellipsis; /* Добавляем многоточие */
-  }
-  .modal-body{   
-    padding: 10px;
-    position: relative;
-    border-top: 1px solid #ccc;
-  }
-    </style>  
-    <title>Document</title>
-</head>
-<body>    
-<div class="modal-header">
-    <h1 class="logo">
-        <img class="logo-icon" src="images/logo.png">Link storage
-    </h1>
-    <span id="errspan"></span>
-</div> 
-<div class="modal-icons">
-        
-</div>
-<div class="inpuwrapper nets" id="add-del">   
-    <input placeholder="name" type="text" name="task">
-    
-    <select name="selGroup" placeholder="GroupName"></select>
-    <input type="text" placeholder="link" name="tlink">
-    <i class="fa fa-plus-circle" aria-hidden="true" id="addTaskbutton"></i>
-    <input id = "add-group" type="text" placeholder="NewGroup" name="inputNewGroup">
-    <i class="fa fa-plus-circle" aria-hidden="true" id="buttonG"></i>    
-</div>
-<div class="modal-body">
-  <i id="perec" class="fa fa-arrow-circle-down" aria-hidden="true"></i>
-  <div id="listM"></div>
-</div>
 
-</body>
-<script src="popup.js"></script>
-</html>
+
+function delli(varib){
+    var delel='undefined';    
+    spisok.map((val,i)=>{        
+        if(val.index == varib){
+            delel=i;
+        } 
+    })
+    
+    if(delel!='undefined') {
+            spisok.splice(delel, 1);           
+            localStorage.clear()                       
+            updateLocal();
+            vyvodgr()
+            getList()
+            delelem()
+        }
+    
+}
+
+window.addEventListener("load", function(){
+    const perec = document.querySelector('#perec');
+    perec.addEventListener('click', () => {
+    var x = document.getElementById("add-del");
+    if (x.classList.contains('nets')) {
+        x.classList.remove('nets')
+      } else {
+        x.classList.add('nets')
+      }
+    });
+    
+    console.log('delelem');
+    delelem()
+    
+});
+
+function delelem(){
+    const varibs = document.querySelectorAll('h4 > i');
+    varibs.forEach(function(varib) {
+        // Вешаем событие клик
+        varib.addEventListener('click', function(e) {
+          console.log('Button clicked'+e.target.id);
+          delli(e.target.id)
+        })
+    })
+    const varibels = document.querySelectorAll('ul > li > i');
+    varibels.forEach(function(varibel) {
+        // Вешаем событие клик
+        varibel.addEventListener('click', function(e) {
+          console.log('Button clicked'+e.target.parentNode.id);
+          delli(e.target.parentNode.id)
+        })
+    })
+}
+
+
+
+var entityMap = {
+'&': '&amp;',
+'<': '&lt;',
+'>': '&gt;',
+'"': '&quot;',
+"'": '&#39;',
+'/': '&#x2F;',
+'`': '&#x60;',
+'=': '&#x3D;'
+};
+
+function escapeHtml(string) {
+return String(string).replace(/[&<>"'`=]/g, function (s) {
+    return entityMap[s];
+});
+}
+
+const inpG = document.querySelector('input[name="inputNewGroup"]');
+const inptask = document.querySelector('input[name="task"]');
+const link = document.querySelector('input[name="tlink"]');
+const selGroup = document.querySelector('select[name="selGroup"]');
+const listM = document.querySelector('#listM');
+//добавление в ЛС
+const updateLocal = () =>{
+    localStorage.setItem('DataStr',JSON.stringify(spisok))
+}
+//список групп
+let spisok = localStorage.getItem('DataStr') ? JSON.parse(localStorage.getItem('DataStr')) : []
+
+buttonG.addEventListener("click",()=>{
+    let group=inpG.value.trim()
+    if(spisok==''){       
+        var indexid = 1;
+    }else{       
+        indexid =spisok[spisok.length-1].index+1        
+    }
+    var groupid = 0;
+    if(group!=''){
+        spisok.push(new Task(escapeHtml(group),groupid,indexid));
+        inpG.value='';        
+        localStorage.clear()
+        document.getElementById('errspan').innerHTML=''
+        updateLocal();
+        vyvodgr()
+        getList()
+        delelem()
+    }else{
+        document.getElementById('errspan').innerHTML="NewGroup должно быть заполнено" 
+    }
+    //getList();
+})
+addTaskbutton.addEventListener("click",()=>{    
+    let task=inptask.value.trim()
+    if(selGroup.value.trim()!='' && task!='' && spisok[0]!='undefined'){
+        let indexid =spisok[spisok.length-1].index+1        
+        spisok.push(new Task(escapeHtml(task),selGroup.value,indexid,escapeHtml(link.value.trim())));
+        inptask.value='';
+        link.value='';        
+        localStorage.clear()
+        updateLocal();
+        vyvodgr()
+        document.getElementById('errspan').innerHTML=''
+        getList()
+        delelem()
+    }else{        
+        document.getElementById('errspan').innerHTML="group, name должно быть заполнено"
+    }
+    //getList();
+})
+
+function Task(name,group,ind,link='',child=false){
+    this.index=ind;
+    this.idgroup=group;
+    this.taskname=name;
+    this.link=link;    
+}
+
+function taskvyvod(val){    
+    try {
+        var taskul = document.getElementById('ul-'+val.idgroup)
+        var groupicon = document.getElementById(val.idgroup)
+      }
+      catch(err) {
+        console.log('не найден=' + val.idgroup)
+      }
+    const li = document.createElement('li');
+    li.className="clip"
+    li.setAttribute("id",val.index)
+    if(val.link=='')val.link='#'
+    li.innerHTML = '<i class="fa fa-times-circle-o" aria-hidden="true"></i><a target="_blank" href="' + val.link + '">' +val.taskname + '</a>'
+    if(taskul && groupicon) {
+        taskul.appendChild(li)
+        if(!groupicon.classList.contains('nets'))groupicon.classList.add('nets');
+        //spisok[val.idgroup].child =true;
+    }
+}
+
+function vyvod(x,index){
+    return `
+    ${x.taskname}
+    `
+}
+function vyvodgr(){
+    var vsegroup ='';
+    spisok.map((val,i)=>{        
+        if(val.idgroup == 0){
+            vsegroup += '<option value='+val.index + '>' + val.taskname + '</option>'
+        } 
+    })
+    selGroup.innerHTML = ''
+    selGroup.innerHTML = vsegroup
+}
+
+const getList = () =>{
+    listM.innerHTML='';    
+    if(spisok.length>0){
+        //filterTask()
+        spisok.map((val,index)=>{
+            //listM.innerHTML+=vyvod(val,index)
+            if(val.idgroup == 0) {listM.innerHTML+= '<h4 class="clip"><i class="fa fa-times-circle-o" id='+val.index+' aria-hidden="true"></i>'+ val.taskname +'</h4><ul id=ul-'+ val.index +'></ul>'}
+            else{
+                taskvyvod(val)
+            }
+        })
+    }
+}
+vyvodgr()
+getList()
+
+
